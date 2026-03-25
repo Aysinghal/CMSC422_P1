@@ -10,7 +10,10 @@ class MostFrequentClassClassifier:
         """
         num_pos = np.sum(y == 1.0)
         num_neg = np.sum(y == -1.0)
-        self.prediction = 1.0 if num_pos >= num_neg else -1.0
+        if num_pos >= num_neg:
+            self.prediction = 1.0
+        else:
+            self.prediction = -1.0
 
     def predict(self, X):
         """
