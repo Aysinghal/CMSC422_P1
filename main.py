@@ -47,6 +47,8 @@ def analysis_part1():
     # TODO: Compute and print the test accuracy of the MostFrequentClassClassifier.
     # Hint: Use utils.compute_accuracy(y_test, preds)
 
+    print(f"MostFrequentClassClassifier test accuracy: {utils.compute_accuracy(y_test, preds)}")
+
 def analysis_part2():
     print("\nPart 2 (KNN on 10% of CIFAR-10):")
     
