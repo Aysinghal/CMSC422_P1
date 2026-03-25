@@ -98,6 +98,15 @@ def analysis_part3():
     # TODO: Compute and print the final training and testing accuracies.
     # TODO: Use utils.plot_decision_boundary to visualize the model on the blob data.
     
+    blob_perceptron = perceptron.Perceptron(num_epochs=50)
+    blob_perceptron.train(X_train_blob, y_train_blob)
+
+    train_accuracy = utils.compute_accuracy(y_train_blob, blob_perceptron.predict(X_train_blob))
+    test_accuracy = utils.compute_accuracy(y_test_blob, blob_perceptron.predict(X_test_blob))
+    print(f"Blob: \n Training accuracy: {train_accuracy} \n Test accuracy: {test_accuracy}")
+
+    utils.plot_decision_boundary(X_test_blob, y_test_blob, blob_perceptron, title="Perceptron on Blob Data")
+
     # Q11: Collinear Blobs Problem
     print("\nFetching collinear data...")
     X_coll, y_coll = utils.get_collinear_blobs()
@@ -105,6 +114,14 @@ def analysis_part3():
     # TODO: Train a Perceptron for 100 epochs on the collinear data.
     # TODO: Print the final training accuracy.
     # TODO: Use utils.plot_decision_boundary to visualize the model on the collinear data.
+
+    collinear_perceptron = perceptron.Perceptron(num_epochs=100)
+    collinear_perceptron.train(X_coll, y_coll)
+
+    collinear_train_accuracy = utils.compute_accuracy(y_coll, collinear_perceptron.predict(X_coll))
+    print(f"Collinear: \n Training accuracy: {collinear_train_accuracy}")
+
+    utils.plot_decision_boundary(X_coll, y_coll, collinear_perceptron, title="Perceptron on Collinear Blobs")
 
 def analysis_part4():
     print("\n--- Analysis Part 4 (Decision Trees) ---")
@@ -130,5 +147,5 @@ if __name__ == "__main__":
     # You can comment/uncomment these out to run specific parts
     analysis_part1()
     # analysis_part2()
-    # analysis_part3()
+    analysis_part3()
     # analysis_part4()

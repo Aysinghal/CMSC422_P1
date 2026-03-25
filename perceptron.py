@@ -16,10 +16,19 @@ class Perceptron:
               w = w + y * x
               b = b + y
         """
-        pass
+        data_points, dimensions = X.shape
+        self.w = np.zeros(dimensions)
+        self.b = 0.0
+
+        for epoch in range(self.num_epochs):
+            for i in range(data_points):
+                if y[i] * (np.dot(self.w, X[i]) + self.b) <= 0:
+                    self.w += y[i] * X[i]
+                    self.b += y[i]
 
     def predict(self, X):
         """
         TODO: Compute w*x + b. Return +1 or -1.
         """
-        return np.zeros(X.shape[0])
+        original_results = X @ self.w + self.b
+        return np.where(original_results >= 0, 1.0, -1.0)
