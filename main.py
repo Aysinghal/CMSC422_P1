@@ -135,17 +135,65 @@ def analysis_part4():
     
     # Q13: Evaluate performance with depths 1, 3, and 5 on SentimentData
     # TODO: Train DT with max_depth 1, 3, and 5 on sentiment_X/y. Evaluate and print accuracy.
-    
+
+    for depth in [1, 3, 5]:
+        model = dt.DT({"max_depth": depth})
+        model.train(sentiment_X, sentiment_y)
+        train_acc = utils.compute_accuracy(sentiment_y, model.predict(sentiment_X))
+        test_acc = utils.compute_accuracy(sentiment_yte, model.predict(sentiment_Xte))
+        print(f"Depth {depth}: Training accuracy {train_acc}, test accuracy {test_acc}")
+
     # Q14: Learning Curves (Dataset Size)
     # TODO: Generate learning curves by changing the dataset size (e.g., using SentimentData).
     # Hint: use plotting code from above, you may also make it a function and call it from `utils`
-    
+
+    dataset_sizes = [1, 5, 10, 20, 50, 100, 200, 500, sentiment_X.shape[0]]
+    train_accs_q14 = []
+    test_accs_q14 = []
+
+    for n in dataset_sizes:
+        model = dt.DT({"max_depth": 5})
+        model.train(sentiment_X[:n], sentiment_y[:n])
+        train_accs_q14.append(utils.compute_accuracy(sentiment_y[:n], model.predict(sentiment_X[:n])))
+        test_accs_q14.append(utils.compute_accuracy(sentiment_yte, model.predict(sentiment_Xte)))
+
+    plt.figure(figsize=(8, 5))
+    plt.plot(dataset_sizes, train_accs_q14, marker='o', label='Train Accuracy')
+    plt.plot(dataset_sizes, test_accs_q14, marker='s', label='Test Accuracy')
+    plt.xlabel('Dataset Size (N)')
+    plt.ylabel('Accuracy')
+    plt.title('Decision Tree Learning Curve (max_depth=5)')
+    plt.legend()
+    plt.grid(True)
+    plt.show()
+
     # Q15: Hyperparameter Curves (Max Depth)
     # TODO: Generate hyperparameter curves by varying the max_depth hyperparameter on SentimentData.
+
+    depths = [1, 3, 5, 7, 11, 15, 20, 30]
+    train_accs_q15 = []
+    test_accs_q15 = []
+
+    for depth in depths:
+        print(f"  Training with max_depth={depth}...")
+        model = dt.DT({"max_depth": depth})
+        model.train(sentiment_X, sentiment_y)
+        train_accs_q15.append(utils.compute_accuracy(sentiment_y, model.predict(sentiment_X)))
+        test_accs_q15.append(utils.compute_accuracy(sentiment_yte, model.predict(sentiment_Xte)))
+
+    plt.figure(figsize=(8, 5))
+    plt.plot(depths, train_accs_q15, marker='o', label='Train Accuracy')
+    plt.plot(depths, test_accs_q15, marker='s', label='Test Accuracy')
+    plt.xlabel('Max Depth')
+    plt.ylabel('Accuracy')
+    plt.title('Decision Tree Accuracy vs. Max Depth (Sentiment Data)')
+    plt.legend()
+    plt.grid(True)
+    plt.show()
 
 if __name__ == "__main__":
     # You can comment/uncomment these out to run specific parts
     analysis_part1()
     # analysis_part2()
     analysis_part3()
-    # analysis_part4()
+    analysis_part4()

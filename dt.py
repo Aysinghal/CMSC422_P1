@@ -70,7 +70,15 @@ class DT:
 
         for n in range(N):
             ### TODO: YOUR CODE HERE (see Algorithm 2 of your textbook)
-            pass
+            node = self
+            while not node.is_leaf:
+                if X[n, node.feature] < 0.5:
+                    node = node.left
+                else:
+                    node = node.right
+            preds[n] = node.label
+
+        return preds
 
 
     def train_dt(self, X, y, remaining_depth, used_features):
@@ -87,8 +95,8 @@ class DT:
             # We'd better end at this point. Need to figure
             # out the label to return
             ### TODO: YOUR CODE HERE
-            self.is_leaf = ...
-            self.label = ...
+            self.is_leaf = True
+            self.label = statistics.mode(y)
 
         else:
             # Examine error on all features (linear search)
@@ -96,7 +104,49 @@ class DT:
             # Split on that into left and right subtrees
 
             ### TODO: YOUR CODE HERE (see Algorithm 1 of your textbook)
-            pass
+            best_feature = None
+            best_error = N + 1
+
+            for f in range(d):
+                if f in used_features:
+                    continue
+
+                left_mask = X[:, f] < 0.5
+                right_mask = X[:, f] >= 0.5
+
+                if np.sum(left_mask) == 0 or np.sum(right_mask) == 0:
+                    continue
+
+                y_left = y[left_mask]
+                y_right = y[right_mask]
+
+                left_mode = statistics.mode(y_left)
+                left_errors = np.sum(y_left != left_mode)
+
+                right_mode = statistics.mode(y_right)
+                right_errors = np.sum(y_right != right_mode)
+
+                total_error = left_errors + right_errors
+
+                if total_error < best_error:
+                    best_error = total_error
+                    best_feature = f
+
+            if best_feature is None:
+                self.is_leaf = True
+                self.label = statistics.mode(y)
+            else:
+                self.is_leaf = False
+                self.feature = best_feature
+
+                left_mask = X[:, best_feature] < 0.5
+                right_mask = X[:, best_feature] >= 0.5
+
+                self.left = DT(self.opts)
+                self.right = DT(self.opts)
+
+                self.left.train_dt(X[left_mask], y[left_mask], remaining_depth - 1, used_features + [best_feature])
+                self.right.train_dt(X[right_mask], y[right_mask], remaining_depth - 1, used_features + [best_feature])
 
 
     def train(self, X, y):
