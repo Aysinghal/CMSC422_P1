@@ -64,19 +64,63 @@ def analysis_part2():
     # Find a test example where the prediction is CORRECT.
     # Get its 5 nearest neighbors from the training set.
     # Plot using utils.plot_image_and_neighbors.
+    # Train KNN with k=5
+    knn_model = knn.KNN(k=5)
+    knn_model.train(X_train_c, y_train_c)
+
+    y_pred = knn_model.predict(X_test_c)
+
+    for i in range(len(X_test_c)):
+        if y_pred[i] == y_test_c[i]:
+            idx_correct = i
+            break
+
+    neighbors_idx = knn_model.get_k_neighbors_indices(X_test_c[idx_correct])
+    neighbor_imgs = X_train_c[neighbors_idx]
+
+    utils.plot_image_and_neighbors(
+        X_test_c[idx_correct],
+        neighbor_imgs
+    )
     
     # Q6: Visualizing Neighbors for a Mistake
     # TODO: Find a test example where the prediction is WRONG.
     # Get its 5 nearest neighbors from the training set.
     # Plot using utils.plot_image_and_neighbors.
-    
+    for i in range(len(X_test_c)):
+        if y_pred[i] != y_test_c[i]:
+            idx_wrong = i
+            break
+
+    neighbors_idx = knn_model.get_k_neighbors_indices(X_test_c[idx_wrong])
+    neighbor_imgs = X_train_c[neighbors_idx]
+
+    utils.plot_image_and_neighbors(
+        X_test_c[idx_wrong],
+        neighbor_imgs
+    )
+        
     # Q7: Hyperparameters, Overfitting, and Underfitting
     k_vals = [3, 5, 7, 9, 11, 13]
-    train_accs = ...
-    test_accs = ...
+    train_accs = []
+    test_accs = []
     # TODO: Loop over k, train the model, get Train Acc and Test Acc.
     # Plot Train and Test accuracies vs. k.
     # Hint: plotting code below
+
+    for k in k_vals:
+        knn_model = knn.KNN(k=k)
+        knn_model.train(X_train_c, y_train_c)
+
+        y_train_pred = knn_model.predict(X_train_c)
+        y_test_pred = knn_model.predict(X_test_c)
+
+        train_acc = utils.compute_accuracy(y_train_c, y_train_pred)
+        test_acc = utils.compute_accuracy(y_test_c, y_test_pred)
+
+        train_accs.append(train_acc)
+        test_accs.append(test_acc)
+
     plt.figure(figsize=(8, 5))
     plt.plot(k_vals, train_accs, marker='o', label='Train Accuracy')
     plt.plot(k_vals, test_accs, marker='s', label='Test Accuracy')
@@ -194,6 +238,6 @@ def analysis_part4():
 if __name__ == "__main__":
     # You can comment/uncomment these out to run specific parts
     analysis_part1()
-    # analysis_part2()
+    analysis_part2()
     analysis_part3()
     analysis_part4()
